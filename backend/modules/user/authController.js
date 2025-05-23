@@ -6,7 +6,11 @@ require('dotenv').config();
 // Registrar um novo usuário
 const registrar = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { nome, email, senha, role } = req.body;
+
+    if (!nome || !email || !senha || !role) {
+      return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios' });
+    }
 
     const [existing] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
 
@@ -14,11 +18,11 @@ const registrar = async (req, res) => {
       return res.status(400).json({ mensagem: 'Usuário já existe' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(senha, 10);
 
     await pool.query(
-      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [username, email, hashedPassword]
+      'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
+      [nome, email, hashedPassword, role]
     );
 
     res.status(201).json({ mensagem: 'Usuário registrado com sucesso' });
@@ -31,19 +35,19 @@ const registrar = async (req, res) => {
 // Login
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [users] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
 
     if (users.length === 0) {
-      return res.status(401).json({ mensagem: 'Email ou senha inválidos' });
+      return res.status(401).json({ mensagem: 'Nome de usuário ou senha inválidos' });
     }
 
     const user = users[0];
     const valid = await bcrypt.compare(password, user.password);
 
     if (!valid) {
-      return res.status(401).json({ mensagem: 'Email ou senha inválidos' });
+      return res.status(401).json({ mensagem: 'Nome de usuário ou senha inválidos' });
     }
 
     const token = jwt.sign(

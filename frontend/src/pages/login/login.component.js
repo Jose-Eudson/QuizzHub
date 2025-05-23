@@ -1,7 +1,7 @@
 document.getElementById("formLogin").addEventListener("submit", async function (event) {
   event.preventDefault();
 
-  const email = document.getElementById("login").value;
+  const username = document.getElementById("login").value;
   const senha = document.getElementById("senha").value;
 
   try {
@@ -10,7 +10,7 @@ document.getElementById("formLogin").addEventListener("submit", async function (
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ email, password: senha })
+      body: JSON.stringify({ username, password: senha })
     });
 
     const data = await response.json();
