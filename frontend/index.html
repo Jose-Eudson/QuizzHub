@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizHub</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const token = localStorage.getItem('token');
+      if (token) {
+        window.location.href = 'src/pages/menu-inicial/menu-inicial.component.html';
+      } else {
+        window.location.href = 'src/pages/login/login.component.html';
+      }
+    });
+  </script>
+</head>
+<body>
+</body>
+</html>
