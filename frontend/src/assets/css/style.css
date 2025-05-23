@@ -1,3 +1,26 @@
 body {
   font-family: 'Segoe UI', sans-serif;
 }
+
+.navbar {
+  border-bottom: 3px solid #8162FF;
+}
+
+.btn-primary {
+  background-color: #8162FF;
+  border: none;
+}
+
+.btn-outline-primary {
+  color: #8162FF;
+  border-color: #8162FF;
+}
+
+.btn-outline-primary:hover {
+  background-color: #8162FF;
+  color: white;
+}
+
+footer {
+  background-color: #f8f9fa;
+}
