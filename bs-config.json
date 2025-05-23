@@ -1,7 +1,0 @@
-{
-  "server": {
-    "baseDir": "./"
-  },
-  "files": ["./**/*.{html,htm,css,js}"],
-  "notify": false
-}
