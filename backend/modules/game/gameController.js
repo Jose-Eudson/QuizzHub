@@ -1,13 +1,10 @@
-// Remova a linha: const io = require('../app').io;
 const pool = require('../db');
 
 function generatePin() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// O arquivo agora exporta uma função "factory" que cria o controller
 const gameController = (io) => {
-  // Agora 'io' está disponível de forma segura dentro deste escopo
 
   const hostGame = async (req, res) => {
     try {
@@ -74,7 +71,6 @@ const gameController = (io) => {
     }
   };
 
-  // Retorna um objeto com os métodos que as rotas irão usar
   return {
     hostGame,
     joinGame

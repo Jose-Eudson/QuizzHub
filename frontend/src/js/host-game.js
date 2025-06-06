@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
   // --- Funções ---
   
-  // Busca e renderiza os quizzes que o host pode escolher
   async function loadHostQuizzes() {
     try {
       const response = await fetch('http://localhost:3000/api/quizzes', {
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const quizzes = await response.json();
       
-      // Filtra apenas os quizzes criados pelo usuário logado (opcional, mas bom)
       // const myQuizzes = quizzes.filter(q => q.creator_name === localStorage.getItem('username'));
 
       quizListEl.innerHTML = quizzes.map(quiz => `
@@ -120,15 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
   questionSectionEl.classList.add('d-none');
   resultSectionEl.classList.remove('d-none');
   
-  // Verifica se a resposta do jogador estava correta
+
   const myResult = data.scores.find(p => p.id === playerGameId);
-  // Esta lógica precisa ser melhorada para saber se acertou ou não,
-  // pois 'player:answerResult' já deu essa informação.
-  // Por ora, apenas mostramos a tela de resultados.
+
   resultTextEl.textContent = "Tempo esgotado! Veja o ranking.";
 
-  // Espera um pouco e automaticamente pede a próxima pergunta para o jogador
-  // (o host ainda controla o avanço)
 });
 
 socket.on('game:finished', (data) => {
@@ -137,9 +131,7 @@ socket.on('game:finished', (data) => {
   questionSectionEl.classList.add('d-none');
   finalSectionEl.classList.remove('d-none');
   finalScoreEl.textContent = myFinalScore;
-  // Renderizar o ranking final
 });
   
-  // Carrega os quizzes do host ao iniciar a página
   loadHostQuizzes();
 });

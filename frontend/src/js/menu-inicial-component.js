@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("aqui2")
       localStorage.removeItem("token");
       localStorage.removeItem("username"); 
-      window.location.href = "../pages/login/login-component.html";
+      window.location.href = "../login/login-component.html";
     });
   }
 

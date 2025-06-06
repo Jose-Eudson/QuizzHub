@@ -17,8 +17,7 @@ async function request(endpoint, options = {}) {
     config.headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // A MUDANÇA PRINCIPAL ESTÁ AQUI:
-  // Centraliza o stringify e só adiciona o body se ele existir.
+
   if (options.body) {
     config.body = JSON.stringify(options.body);
   }
@@ -43,8 +42,6 @@ async function request(endpoint, options = {}) {
   return null;
 }
 
-// As funções de endpoint agora ficam mais limpas,
-// passando apenas o objeto de dados, sem o JSON.stringify.
 
 // === Endpoints de Quizzes ===
 export const fetchQuizzes = () => request('/quizzes');

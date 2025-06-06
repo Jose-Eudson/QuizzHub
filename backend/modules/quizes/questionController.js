@@ -19,7 +19,8 @@ const adicionarPergunta = async (req, res) => {
 
     res.status(201).json({
       mensagem: 'Pergunta adicionada com sucesso',
-      id: result.insertId // <-- CORREÇÃO: Usar "id" como chave padrão
+      id: result.insertId 
+      
     });
   } catch (error) {
     console.error(error);

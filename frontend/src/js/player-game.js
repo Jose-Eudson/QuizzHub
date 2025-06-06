@@ -77,7 +77,6 @@ const finalScoreEl = document.getElementById('finalSection').querySelector('#fin
 
   socket.on('game:started', (data) => {
     console.log('O jogo começou!', data);
-    // A lógica para receber a primeira pergunta virá em outro evento
   });
   
   let currentQuestionId = null; // Guarda o ID da pergunta atual
@@ -98,16 +97,12 @@ const finalScoreEl = document.getElementById('finalSection').querySelector('#fin
   socket.on('game:questionResult', (data) => {
   questionSectionEl.classList.add('d-none');
   resultSectionEl.classList.remove('d-none');
-  
-  // Verifica se a resposta do jogador estava correta
+
   const myResult = data.scores.find(p => p.id === playerGameId);
-  // Esta lógica precisa ser melhorada para saber se acertou ou não,
-  // pois 'player:answerResult' já deu essa informação.
-  // Por ora, apenas mostramos a tela de resultados.
+
   resultTextEl.textContent = "Tempo esgotado! Veja o ranking.";
 
-  // Espera um pouco e automaticamente pede a próxima pergunta para o jogador
-  // (o host ainda controla o avanço)
+
 });
 
 socket.on('game:finished', (data) => {
