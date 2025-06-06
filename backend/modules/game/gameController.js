@@ -1,135 +1,84 @@
+// Remova a linha: const io = require('../app').io;
 const pool = require('../db');
 
+function generatePin() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
-const iniciarQuiz = async (req, res) => {
-  try {
-    const { quizId } = req.params;
-    const userId = req.usuario.id;
+// O arquivo agora exporta uma função "factory" que cria o controller
+const gameController = (io) => {
+  // Agora 'io' está disponível de forma segura dentro deste escopo
 
-    const [quiz] = await pool.query('SELECT id FROM quizzes WHERE id = ?', [quizId]);
-    
-    if (quiz.length === 0) {
-      return res.status(404).json({ mensagem: 'Quiz não encontrado' });
-    }
+  const hostGame = async (req, res) => {
+    try {
+      const { quizId } = req.body;
+      const hostId = req.usuario.id;
 
-    const [result] = await pool.query(
-      'INSERT INTO player_games (player_id, quiz_id, started_at) VALUES (?, ?, NOW())',
-      [userId, quizId]
-    );
+      if (!quizId) {
+        return res.status(400).json({ mensagem: 'O ID do Quiz é obrigatório.' });
+      }
 
-    const [questions] = await pool.query(
-      'SELECT id, question_text, time_limit, points FROM questions WHERE quiz_id = ? ORDER BY id LIMIT 1',
-      [quizId]
-    );
-
-    if (questions.length === 0) {
-      return res.status(400).json({ mensagem: 'Este quiz não tem perguntas' });
-    }
-
-    res.status(201).json({
-      mensagem: 'Quiz iniciado',
-      gameId: result.insertId,
-      currentQuestion: questions[0]
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensagem: 'Erro ao iniciar quiz' });
-  }
-};
-
-
-const responderPergunta = async (req, res) => {
-  try {
-    const { gameId, questionId } = req.params;
-    const { answerId } = req.body;
-    const userId = req.usuario.id;
-
-    const [game] = await pool.query('SELECT player_id FROM player_games WHERE id = ?', [gameId]);
-    
-    if (game.length === 0) {
-      return res.status(404).json({ mensagem: 'Jogo não encontrado' });
-    }
-    
-    if (game[0].player_id !== userId) {
-      return res.status(403).json({ mensagem: 'Este jogo não pertence a você' });
-    }
-
-    const [answer] = await pool.query(
-      'SELECT id, is_correct FROM answers WHERE id = ? AND question_id = ?',
-      [answerId, questionId]
-    );
-    
-    if (answer.length === 0) {
-      return res.status(404).json({ mensagem: 'Resposta não encontrada' });
-    }
-
-    const [question] = await pool.query('SELECT points FROM questions WHERE id = ?', [questionId]);
-    const points = answer[0].is_correct ? question[0].points : 0;
-
-    await pool.query(
-      'INSERT INTO scores (player_game_id, question_id, answer_id, points_earned) VALUES (?, ?, ?, ?)',
-      [gameId, questionId, answerId, points]
-    );
-
-    const [nextQuestion] = await pool.query(`
-      SELECT q.id, q.question_text, q.time_limit, q.points 
-      FROM questions q
-      WHERE q.quiz_id = (SELECT quiz_id FROM player_games WHERE id = ?)
-      AND q.id > ?
-      ORDER BY q.id
-      LIMIT 1
-    `, [gameId, questionId]);
-
-    if (nextQuestion.length === 0) {
-      await pool.query('UPDATE player_games SET finished_at = NOW() WHERE id = ?', [gameId]);
-      
-      const [totalScore] = await pool.query(
-        'SELECT SUM(points_earned) as total FROM scores WHERE player_game_id = ?',
-        [gameId]
+      const pin = generatePin();
+      const [result] = await pool.query(
+        'INSERT INTO games (quiz_id, host_id, pin, status) VALUES (?, ?, ?, ?)',
+        [quizId, hostId, pin, 'waiting']
       );
-      
-      return res.json({
-        mensagem: 'Quiz concluído!',
-        totalScore: totalScore[0].total || 0,
-        finished: true
+      const gameId = result.insertId;
+
+      res.status(201).json({
+        mensagem: 'Jogo criado com sucesso! Compartilhe o PIN com os jogadores.',
+        gameId,
+        pin
       });
+    } catch (error) {
+      console.error('Erro ao hospedar jogo:', error);
+      res.status(500).json({ mensagem: 'Erro interno ao hospedar o jogo.' });
     }
+  };
 
-    res.json({
-      mensagem: 'Resposta registrada',
-      currentQuestion: nextQuestion[0],
-      finished: false
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensagem: 'Erro ao responder pergunta' });
-  }
+  const joinGame = async (req, res) => {
+    try {
+      const { pin, nickname } = req.body;
+      if (!pin || !nickname) {
+        return res.status(400).json({ mensagem: 'PIN e Nickname são obrigatórios.' });
+      }
+
+      const [games] = await pool.query('SELECT id, status FROM games WHERE pin = ?', [pin]);
+      if (games.length === 0) {
+        return res.status(404).json({ mensagem: 'Jogo não encontrado com este PIN.' });
+      }
+      
+      const game = games[0];
+      if (game.status !== 'waiting') {
+        return res.status(403).json({ mensagem: 'Este jogo não está mais aceitando jogadores.' });
+      }
+
+      const [result] = await pool.query(
+        'INSERT INTO player_games (game_id, nickname) VALUES (?, ?)',
+        [game.id, nickname]
+      );
+      const player = { id: result.insertId, nickname: nickname, score: 0 };
+
+      // Usando o 'io' injetado para emitir o evento
+      io.to(`host_${game.id}`).emit('player:joined', player);
+      
+      res.status(200).json({
+        mensagem: 'Você entrou no jogo!',
+        gameId: game.id,
+        playerGameId: player.id,
+        nickname: player.nickname
+      });
+    } catch (error) {
+      console.error('Erro ao entrar no jogo:', error);
+      res.status(500).json({ mensagem: 'Erro interno ao entrar no jogo.' });
+    }
+  };
+
+  // Retorna um objeto com os métodos que as rotas irão usar
+  return {
+    hostGame,
+    joinGame
+  };
 };
 
-const obterRanking = async (req, res) => {
-  try {
-    const { quizId } = req.params;
-
-    const [ranking] = await pool.query(`
-      SELECT u.username, SUM(s.points_earned) as total_score
-      FROM player_games pg
-      JOIN scores s ON pg.id = s.player_game_id
-      JOIN users u ON pg.player_id = u.id
-      WHERE pg.quiz_id = ?
-      GROUP BY pg.player_id
-      ORDER BY total_score DESC
-      LIMIT 10
-    `, [quizId]);
-    
-    res.json(ranking);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensagem: 'Erro ao obter ranking' });
-  }
-};
-
-module.exports = {
-  iniciarQuiz,
-  responderPergunta,
-  obterRanking
-};
+module.exports = gameController;

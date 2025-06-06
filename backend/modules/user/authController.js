@@ -5,9 +5,9 @@ require('dotenv').config();
 
 const registrar = async (req, res) => {
   try {
-    const { nome, email, senha, role } = req.body;
+    const { username, email, senha, role } = req.body;
 
-    if (!nome || !email || !senha || !role) {
+    if (!username || !email || !senha || !role) {
       return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios' });
     }
 
@@ -21,7 +21,7 @@ const registrar = async (req, res) => {
 
     await pool.query(
       'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
-      [nome, email, hashedPassword, role]
+      [username, email, hashedPassword, role]
     );
 
     res.status(201).json({ mensagem: 'Usuário registrado com sucesso' });

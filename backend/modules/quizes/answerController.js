@@ -2,23 +2,14 @@ const pool = require('../db');
 
 const adicionarResposta = async (req, res) => {
   try {
-    const { questionId } = req.params;
+    const { quizId, questionId } = req.params;
     const { answer_text, is_correct } = req.body;
     const userId = req.usuario.id;
 
-    const [question] = await pool.query(`
-      SELECT q.creator_id 
-      FROM questions p
-      JOIN quizzes q ON p.quiz_id = q.id
-      WHERE p.id = ?
-    `, [questionId]);
-    
-    if (question.length === 0) {
-      return res.status(404).json({ mensagem: 'Pergunta não encontrada' });
-    }
-    
-    if (question[0].creator_id !== userId && req.usuario.role !== 'admin') {
-      return res.status(403).json({ mensagem: 'Você não tem permissão para adicionar respostas a esta pergunta' });
+    const [quiz] = await pool.query('SELECT creator_id FROM quizzes WHERE id = ?', [quizId]);
+    if (quiz.length === 0) return res.status(404).json({ mensagem: 'Quiz não encontrado' });
+    if (quiz[0].creator_id !== userId && req.usuario.role !== 'admin') {
+      return res.status(403).json({ mensagem: 'Você não tem permissão para adicionar respostas' });
     }
 
     const [result] = await pool.query(
@@ -28,7 +19,7 @@ const adicionarResposta = async (req, res) => {
 
     res.status(201).json({
       mensagem: 'Resposta adicionada com sucesso',
-      answerId: result.insertId
+      id: result.insertId // <-- CORREÇÃO: Usar "id" como chave padrão
     });
   } catch (error) {
     console.error(error);
@@ -36,89 +27,52 @@ const adicionarResposta = async (req, res) => {
   }
 };
 
-const listarRespostas = async (req, res) => {
-  try {
-    const { questionId } = req.params;
-    
-    const [answers] = await pool.query(
-      'SELECT id, answer_text FROM answers WHERE question_id = ?',
-      [questionId]
-    );
-    
-    res.json(answers);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensagem: 'Erro ao listar respostas' });
-  }
-};
-
 const atualizarResposta = async (req, res) => {
-  try {
-    const { answerId } = req.params;
-    const { answer_text, is_correct } = req.body;
-    const userId = req.usuario.id;
+    try {
+        const { quizId, questionId, answerId } = req.params;
+        const { answer_text, is_correct } = req.body;
+        const userId = req.usuario.id;
 
-    const [answer] = await pool.query(`
-      SELECT q.creator_id 
-      FROM answers a
-      JOIN questions p ON a.question_id = p.id
-      JOIN quizzes q ON p.quiz_id = q.id
-      WHERE a.id = ?
-    `, [answerId]);
-    
-    if (answer.length === 0) {
-      return res.status(404).json({ mensagem: 'Resposta não encontrada' });
-    }
-    
-    if (answer[0].creator_id !== userId && req.usuario.role !== 'admin') {
-      return res.status(403).json({ mensagem: 'Você não tem permissão para editar esta resposta' });
-    }
+        const [quiz] = await pool.query('SELECT creator_id FROM quizzes WHERE id = ?', [quizId]);
+        if (quiz.length === 0) return res.status(404).json({ mensagem: 'Quiz não encontrado' });
+        if (quiz[0].creator_id !== userId && req.usuario.role !== 'admin') {
+            return res.status(403).json({ mensagem: 'Você não tem permissão para editar esta resposta' });
+        }
 
-    await pool.query(
-      'UPDATE answers SET answer_text = ?, is_correct = ? WHERE id = ?',
-      [answer_text, is_correct, answerId]
-    );
-    
-    res.json({ mensagem: 'Resposta atualizada com sucesso' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensagem: 'Erro ao atualizar resposta' });
-  }
+        await pool.query(
+            'UPDATE answers SET answer_text = ?, is_correct = ? WHERE id = ? AND question_id = ?',
+            [answer_text, is_correct, answerId, questionId]
+        );
+        
+        res.json({ mensagem: 'Resposta atualizada com sucesso' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ mensagem: 'Erro ao atualizar resposta' });
+    }
 };
 
 const deletarResposta = async (req, res) => {
-  try {
-    const { answerId } = req.params;
-    const userId = req.usuario.id;
+    try {
+        const { quizId, questionId, answerId } = req.params;
+        const userId = req.usuario.id;
 
-    const [answer] = await pool.query(`
-      SELECT q.creator_id 
-      FROM answers a
-      JOIN questions p ON a.question_id = p.id
-      JOIN quizzes q ON p.quiz_id = q.id
-      WHERE a.id = ?
-    `, [answerId]);
-    
-    if (answer.length === 0) {
-      return res.status(404).json({ mensagem: 'Resposta não encontrada' });
-    }
-    
-    if (answer[0].creator_id !== userId && req.usuario.role !== 'admin') {
-      return res.status(403).json({ mensagem: 'Você não tem permissão para deletar esta resposta' });
-    }
+        const [quiz] = await pool.query('SELECT creator_id FROM quizzes WHERE id = ?', [quizId]);
+        if (quiz.length === 0) return res.status(404).json({ mensagem: 'Quiz não encontrado' });
+        if (quiz[0].creator_id !== userId && req.usuario.role !== 'admin') {
+            return res.status(403).json({ mensagem: 'Você não tem permissão para deletar esta resposta' });
+        }
 
-    await pool.query('DELETE FROM answers WHERE id = ?', [answerId]);
-    
-    res.json({ mensagem: 'Resposta deletada com sucesso' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensagem: 'Erro ao deletar resposta' });
-  }
+        await pool.query('DELETE FROM answers WHERE id = ? AND question_id = ?', [answerId, questionId]);
+        
+        res.json({ mensagem: 'Resposta deletada com sucesso' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ mensagem: 'Erro ao deletar resposta' });
+    }
 };
 
 module.exports = {
   adicionarResposta,
-  listarRespostas,
   atualizarResposta,
   deletarResposta
 };

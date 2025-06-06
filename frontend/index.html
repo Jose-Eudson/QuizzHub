@@ -8,18 +8,10 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const token = localStorage.getItem('token');
-      const userRole = localStorage.getItem('userRole');
-
-      if (token && userRole) {
-        if (userRole === 'admin') {
-          window.location.href = 'src/pages/menu-inicial/menu-inicial.component.html';
-        } else if (userRole === 'user') {
-          window.location.href = 'src/pages/menu-inicial/menu-jogador.html';
-        } else {
-          window.location.href = 'src/pages/login/login.component.html';
-        }
+      if (token) {
+        window.location.href = 'src/pages/menu-inicial/menu-inicial-component.html';
       } else {
-        window.location.href = 'src/pages/login/login.component.html';
+        window.location.href = 'src/pages/login/login-component.html';
       }
     });
   </script>

@@ -1,11 +1,15 @@
 const express = require('express');
-const router = express.Router();
+// Habilita a passagem de parâmetros da rota pai (ex: :quizId) para esta rota
+const router = express.Router({ mergeParams: true }); 
 const questionController = require('./questionController');
+const answerRoutes = require('./answerRoutes'); // Importa as rotas de respostas
 const autenticar = require('../user/authMiddleware');
 
-router.post('/:quizId/perguntas', autenticar, questionController.adicionarPergunta);
-router.get('/:quizId/perguntas', questionController.listarPerguntas);
-router.put('/perguntas/:questionId', autenticar, questionController.atualizarPergunta);
-router.delete('/perguntas/:questionId', autenticar, questionController.deletarPergunta);
+// Rotas relativas a /api/quizzes/:quizId/questions
+router.post('/', autenticar, questionController.adicionarPergunta);
+router.put('/:questionId', autenticar, questionController.atualizarPergunta);
+router.delete('/:questionId', autenticar, questionController.deletarPergunta);
+
+router.use('/:questionId/answers', answerRoutes);
 
 module.exports = router;

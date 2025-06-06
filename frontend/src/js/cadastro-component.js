@@ -1,7 +1,7 @@
 document.getElementById("formCadastro").addEventListener("submit", async function (event) {
   event.preventDefault();
 
-  const nome = document.getElementById("nome").value;
+  const username = document.getElementById("username").value;
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
   const role = document.getElementById("role").value;
@@ -12,14 +12,14 @@ document.getElementById("formCadastro").addEventListener("submit", async functio
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ nome, email, senha, role })
+      body: JSON.stringify({ username, email, senha, role })
     });
 
     const data = await response.json();
 
     if (response.ok) {
       alert("Cadastro realizado com sucesso!");
-      window.location.href = "../login/login.component.html";
+      window.location.href = "../login/login-component.html";
     } else {
       alert(data.mensagem || "Erro ao cadastrar.");
     }

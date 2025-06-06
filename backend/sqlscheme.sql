@@ -13,16 +13,17 @@ CREATE TABLE quizzes (
   title VARCHAR(100) NOT NULL,
   description TEXT,
   creator_id INT NOT NULL,
+  time_limit INT DEFAULT 600,
+  difficulty ENUM('facil', 'medio', 'dificil') DEFAULT 'facil',
+  category VARCHAR(50) NULL, 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
 CREATE TABLE questions (
   id INT AUTO_INCREMENT PRIMARY KEY,
   quiz_id INT NOT NULL,
   question_text TEXT NOT NULL,
-  time_limit INT DEFAULT 30, 
   points INT DEFAULT 10,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -37,6 +38,31 @@ CREATE TABLE answers (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE games (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT NOT NULL,
+  host_id INT NOT NULL,
+  pin INT UNIQUE NOT NULL,
+  status ENUM('waiting', 'in_progress', 'finished') DEFAULT 'waiting',
+  current_question INT DEFAULT 0,
+  question_started_at TIMESTAMP NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  ended_at TIMESTAMP NULL,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+  FOREIGN KEY (host_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE player_games (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  game_id INT NOT NULL,
+  nickname VARCHAR(50) NOT NULL,
+  score INT DEFAULT 0,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
 );
 
 CREATE TABLE scores (
