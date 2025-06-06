@@ -1,13 +1,11 @@
 const pool = require('../db');
 
-// Adicionar resposta a uma pergunta
 const adicionarResposta = async (req, res) => {
   try {
     const { questionId } = req.params;
     const { answer_text, is_correct } = req.body;
     const userId = req.usuario.id;
 
-    // Verificar se a pergunta pertence ao usuário
     const [question] = await pool.query(`
       SELECT q.creator_id 
       FROM questions p
@@ -38,7 +36,6 @@ const adicionarResposta = async (req, res) => {
   }
 };
 
-// Listar respostas de uma pergunta
 const listarRespostas = async (req, res) => {
   try {
     const { questionId } = req.params;
@@ -55,14 +52,12 @@ const listarRespostas = async (req, res) => {
   }
 };
 
-// Atualizar resposta
 const atualizarResposta = async (req, res) => {
   try {
     const { answerId } = req.params;
     const { answer_text, is_correct } = req.body;
     const userId = req.usuario.id;
 
-    // Verificar se a resposta pertence ao usuário
     const [answer] = await pool.query(`
       SELECT q.creator_id 
       FROM answers a
@@ -91,13 +86,11 @@ const atualizarResposta = async (req, res) => {
   }
 };
 
-// Deletar resposta
 const deletarResposta = async (req, res) => {
   try {
     const { answerId } = req.params;
     const userId = req.usuario.id;
 
-    // Verificar se a resposta pertence ao usuário
     const [answer] = await pool.query(`
       SELECT q.creator_id 
       FROM answers a

@@ -4,15 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-
-
-  <title>QuizHub</title>
+  <title>QuizHub - Carregando...</title>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const token = localStorage.getItem('token');
-      if (token) {
-        window.location.href = 'src/pages/menu-inicial/menu-inicial.component.html';
+      const userRole = localStorage.getItem('userRole');
+
+      if (token && userRole) {
+        if (userRole === 'admin') {
+          window.location.href = 'src/pages/menu-inicial/menu-inicial.component.html';
+        } else if (userRole === 'user') {
+          window.location.href = 'src/pages/menu-inicial/menu-jogador.html';
+        } else {
+          window.location.href = 'src/pages/login/login.component.html';
+        }
       } else {
         window.location.href = 'src/pages/login/login.component.html';
       }
@@ -20,5 +25,8 @@
   </script>
 </head>
 <body>
+  <div style="text-align: center; padding-top: 50px; font-family: sans-serif;">
+    <h2>Carregando...</h2>
+  </div>
 </body>
 </html>

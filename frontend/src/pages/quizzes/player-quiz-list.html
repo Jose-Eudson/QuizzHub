@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizHub - Quizzes Disponíveis</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+</head>
+<body class="bg-light">
+
+  <nav class="navbar navbar-dark bg-dark shadow-sm px-4 py-2">
+    <span class="navbar-brand fw-bold fs-4">QuizHub</span>
+    <div>
+      <a href="../menu-inicial/menu-jogador.html" class="btn btn-outline-light me-2">Início</a>
+      <button class="btn btn-outline-light" id="btnLogout">Sair</button>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-4">
+    <h2 class="h3 mb-4 text-center">Quizzes Disponíveis</h2>
+
+    <div class="row mb-4 justify-content-center filter-container mx-auto" style="max-width: 900px;">
+      <div class="col-md-4 mb-2 mb-md-0">
+        <input type="text" class="form-control" id="searchInput" placeholder="Buscar por título...">
+      </div>
+      <div class="col-md-4 mb-2 mb-md-0">
+        <select class="form-select" id="categoryFilter">
+          <option value="">Todas as Categorias</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" id="difficultyFilter">
+          <option value="">Todas as Dificuldades</option>
+          <option value="facil">Fácil</option>
+          <option value="medio">Médio</option>
+          <option value="dificil">Difícil</option>
+        </select>
+      </div>
+    </div>
+    <div id="loadingSpinner" class="text-center py-4" style="display: none;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+    </div>
+
+    <div id="quizzesListContainer" class="row g-4"></div>
+
+    <div id="noQuizzesMessage" class="text-center py-5" style="display: none;">
+      <i class="bi bi-emoji-frown display-1 text-muted mb-3"></i>
+      <h4 class="text-muted" id="noQuizzesText">Nenhum quiz encontrado.</h4>
+    </div>
+  </div>
+
+  <script src="player-quiz-list.js"></script>
+</body>
+</html>

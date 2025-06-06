@@ -1,25 +1,22 @@
 const pool = require('../db');
 
-// Iniciar um quiz
+
 const iniciarQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
     const userId = req.usuario.id;
 
-    // Verificar se o quiz existe
     const [quiz] = await pool.query('SELECT id FROM quizzes WHERE id = ?', [quizId]);
     
     if (quiz.length === 0) {
       return res.status(404).json({ mensagem: 'Quiz não encontrado' });
     }
 
-    // Criar registro do jogo
     const [result] = await pool.query(
       'INSERT INTO player_games (player_id, quiz_id, started_at) VALUES (?, ?, NOW())',
       [userId, quizId]
     );
 
-    // Obter primeira pergunta
     const [questions] = await pool.query(
       'SELECT id, question_text, time_limit, points FROM questions WHERE quiz_id = ? ORDER BY id LIMIT 1',
       [quizId]
@@ -40,14 +37,13 @@ const iniciarQuiz = async (req, res) => {
   }
 };
 
-// Responder pergunta
+
 const responderPergunta = async (req, res) => {
   try {
     const { gameId, questionId } = req.params;
     const { answerId } = req.body;
     const userId = req.usuario.id;
 
-    // Verificar se o jogo pertence ao usuário
     const [game] = await pool.query('SELECT player_id FROM player_games WHERE id = ?', [gameId]);
     
     if (game.length === 0) {
@@ -58,7 +54,6 @@ const responderPergunta = async (req, res) => {
       return res.status(403).json({ mensagem: 'Este jogo não pertence a você' });
     }
 
-    // Verificar se a resposta existe e é correta
     const [answer] = await pool.query(
       'SELECT id, is_correct FROM answers WHERE id = ? AND question_id = ?',
       [answerId, questionId]
@@ -68,17 +63,14 @@ const responderPergunta = async (req, res) => {
       return res.status(404).json({ mensagem: 'Resposta não encontrada' });
     }
 
-    // Obter pontos da pergunta
     const [question] = await pool.query('SELECT points FROM questions WHERE id = ?', [questionId]);
     const points = answer[0].is_correct ? question[0].points : 0;
 
-    // Registrar resposta
     await pool.query(
       'INSERT INTO scores (player_game_id, question_id, answer_id, points_earned) VALUES (?, ?, ?, ?)',
       [gameId, questionId, answerId, points]
     );
 
-    // Obter próxima pergunta
     const [nextQuestion] = await pool.query(`
       SELECT q.id, q.question_text, q.time_limit, q.points 
       FROM questions q
@@ -89,10 +81,8 @@ const responderPergunta = async (req, res) => {
     `, [gameId, questionId]);
 
     if (nextQuestion.length === 0) {
-      // Finalizar jogo se não houver mais perguntas
       await pool.query('UPDATE player_games SET finished_at = NOW() WHERE id = ?', [gameId]);
       
-      // Calcular pontuação total
       const [totalScore] = await pool.query(
         'SELECT SUM(points_earned) as total FROM scores WHERE player_game_id = ?',
         [gameId]
@@ -116,7 +106,6 @@ const responderPergunta = async (req, res) => {
   }
 };
 
-// Obter ranking de um quiz
 const obterRanking = async (req, res) => {
   try {
     const { quizId } = req.params;

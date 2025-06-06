@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const pool = require('../db');
 require('dotenv').config();
 
-// Registrar um novo usuário
 const registrar = async (req, res) => {
   try {
     const { nome, email, senha, role } = req.body;
@@ -32,7 +31,6 @@ const registrar = async (req, res) => {
   }
 };
 
-// Login
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -71,7 +69,6 @@ const login = async (req, res) => {
   }
 };
 
-// Perfil protegido
 const perfil = async (req, res) => {
   try {
     const usuario = req.usuario;

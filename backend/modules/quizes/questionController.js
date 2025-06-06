@@ -1,13 +1,11 @@
 const pool = require('../db');
 
-// Adicionar pergunta a um quiz
 const adicionarPergunta = async (req, res) => {
   try {
     const { quizId } = req.params;
     const { question_text, time_limit, points } = req.body;
     const userId = req.usuario.id;
 
-    // Verificar se o quiz pertence ao usuário
     const [quiz] = await pool.query('SELECT creator_id FROM quizzes WHERE id = ?', [quizId]);
     
     if (quiz.length === 0) {
@@ -33,7 +31,6 @@ const adicionarPergunta = async (req, res) => {
   }
 };
 
-// Listar perguntas de um quiz
 const listarPerguntas = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -50,14 +47,12 @@ const listarPerguntas = async (req, res) => {
   }
 };
 
-// Atualizar pergunta
 const atualizarPergunta = async (req, res) => {
   try {
     const { questionId } = req.params;
     const { question_text, time_limit, points } = req.body;
     const userId = req.usuario.id;
 
-    // Verificar se a pergunta pertence ao usuário
     const [question] = await pool.query(`
       SELECT q.creator_id 
       FROM questions p
@@ -85,13 +80,11 @@ const atualizarPergunta = async (req, res) => {
   }
 };
 
-// Deletar pergunta
 const deletarPergunta = async (req, res) => {
   try {
     const { questionId } = req.params;
     const userId = req.usuario.id;
 
-    // Verificar se a pergunta pertence ao usuário
     const [question] = await pool.query(`
       SELECT q.creator_id 
       FROM questions p

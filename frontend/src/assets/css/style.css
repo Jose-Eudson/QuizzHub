@@ -343,3 +343,96 @@
       border-left-color: var(--success-dark);
       background: rgba(6, 214, 160, 0.1);
     }
+    .filter-container {
+  background: rgba(15, 52, 96, 0.5);
+  padding: 1.5rem;
+  border-radius: 15px;
+  border: 1px solid var(--accent-purple);
+  margin-bottom: 2rem;
+}
+
+/* Tela do Player do Quiz */
+.quiz-player-body {
+  background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+  color: var(--text-light);
+}
+
+#quizArea {
+  animation: slideUp 0.6s ease-out;
+}
+
+.player-answer-option {
+  background-color: var(--card-bg);
+  border: 2px solid var(--accent-purple);
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.player-answer-option:hover {
+  background-color: var(--accent-purple);
+  border-color: var(--accent-pink);
+  transform: translateX(10px);
+}
+
+.player-answer-option.selected {
+  background-color: var(--accent-pink);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 15px var(--accent-pink);
+}
+
+#timerDisplay {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--accent-blue);
+}
+
+#progressIndicator {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Tela de Resultados */
+#feedbackMessage {
+  font-weight: bold;
+  background: linear-gradient(45deg, var(--accent-blue), var(--accent-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#score {
+  color: var(--success-dark) !important;
+  font-size: 2.5rem;
+}
+
+/* Tabela de Ranking */
+.table {
+  --bs-table-bg: var(--card-bg);
+  --bs-table-striped-bg: var(--secondary-dark);
+  --bs-table-color: var(--text-light);
+  --bs-table-border-color: var(--accent-purple);
+  --bs-table-hover-bg: var(--accent-purple);
+  --bs-table-hover-color: white;
+}
+
+.table-dark {
+   --bs-table-bg: var(--accent-purple);
+   --bs-table-border-color: var(--accent-pink);
+}
+
+/* Histórico de Tentativas */
+.history-item {
+  background-color: var(--card-bg);
+  border-color: var(--accent-purple);
+  color: var(--text-light);
+  transition: all 0.2s ease-in-out;
+}
+
+.history-item:hover {
+   transform: scale(1.02);
+   border-left: 5px solid var(--accent-pink);
+}
