@@ -6,14 +6,14 @@
   <title>QuizHub - Gerenciar Quizzes</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="../../assets/css/style.css" /> 
 </head>
 <body class="bg-light">
 
   <nav class="navbar navbar-dark bg-dark shadow-sm px-4 py-2">
     <span class="navbar-brand fw-bold fs-4">QuizHub</span>
     <div>
-      <a href="#" class="btn btn-outline-light me-2" id="btnHome">Início</a>
+      <a href="../menu-inicial/menu-inicial-component.html" class="btn btn-outline-light me-2">Início</a>
       <button class="btn btn-outline-light" id="btnLogout">Sair</button>
     </div>
   </nav>
@@ -28,13 +28,11 @@
 
     <div class="row mb-4">
       <div class="col-12">
-        <div class="search-container mx-auto">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Buscar quizzes..." id="searchInput">
-            <button class="btn btn-outline-secondary" type="button" id="btnSearch">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
+        <div class="input-group mx-auto" style="max-width: 600px;">
+          <input type="text" class="form-control" placeholder="Buscar quizzes..." id="searchInput">
+          <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+            <i class="bi bi-search"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -45,8 +43,7 @@
       </div>
     </div>
 
-    <div id="quizzesContainer" class="row g-4">
-    </div>
+    <div id="quizzesContainer" class="row g-4"></div>
 
     <div id="noQuizzes" class="text-center py-5" style="display: none;">
       <i class="bi bi-question-circle display-1 text-muted mb-3"></i>
@@ -65,14 +62,10 @@
         <div class="modal-body">
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="info-tab" data-bs-toggle="pill" data-bs-target="#info-content" type="button">
-                <i class="bi bi-info-circle me-2"></i>Informações
-              </button>
+              <button class="nav-link active" id="info-tab" data-bs-toggle="pill" data-bs-target="#info-content" type="button">Informações</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="questions-tab" data-bs-toggle="pill" data-bs-target="#questions-content" type="button">
-                <i class="bi bi-question-circle me-2"></i>Perguntas
-              </button>
+              <button class="nav-link" id="questions-tab" data-bs-toggle="pill" data-bs-target="#questions-content" type="button">Perguntas</button>
             </li>
           </ul>
           
@@ -80,41 +73,33 @@
             <div class="tab-pane fade show active" id="info-content">
               <form id="quizInfoForm">
                 <input type="hidden" id="quizId">
-                <div class="row">
-                  <div class="col-md-8">
-                    <div class="mb-3">
-                      <label for="title" class="form-label">Título *</label>
-                      <input type="text" class="form-control" id="title" required>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="mb-3">
-                      <label for="difficulty" class="form-label">Dificuldade *</label>
-                      <select class="form-select" id="difficulty" required>
-                        <option value="">Selecione...</option>
-                        <option value="facil">Fácil</option>
-                        <option value="medio">Médio</option>
-                        <option value="dificil">Difícil</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                
                 <div class="mb-3">
-                  <label for="description" class="form-label">Descrição *</label>
-                  <textarea class="form-control" id="description" rows="3" required></textarea>
+                  <label for="title" class="form-label">Título *</label>
+                  <input type="text" class="form-control" id="title" required>
                 </div>
+
+                <div class="mb-3">
+                  <label for="description" class="form-label">Descrição</label>
+                  <textarea class="form-control" id="description" rows="3"></textarea>
+                </div>
+
                 <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="timeLimit" class="form-label">Tempo Limite (minutos) *</label>
-                      <input type="number" class="form-control" id="timeLimit" min="1" max="180" value="10" required>
-                    </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="difficulty" class="form-label">Dificuldade</label>
+                    <select class="form-select" id="difficulty">
+                      <option value="facil" selected>Fácil</option>
+                      <option value="medio">Médio</option>
+                      <option value="dificil">Difícil</option>
+                    </select>
                   </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="category" class="form-label">Categoria</label>
-                      <input type="text" class="form-control" id="category" placeholder="Ex: Geografia, História...">
-                    </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="category" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="category" placeholder="Ex: Geografia">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="timeLimit" class="form-label">Tempo Limite (minutos)</label>
+                    <input type="number" class="form-control" id="timeLimit" min="1" value="10">
                   </div>
                 </div>
               </form>
@@ -127,8 +112,7 @@
                   <i class="bi bi-plus-lg me-1"></i>Adicionar Pergunta
                 </button>
               </div>
-              <div id="questionsContainer">
-              </div>
+              <div id="questionsContainer"></div>
             </div>
           </div>
         </div>
@@ -141,631 +125,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const API_BASE = 'http://localhost:3000/api';
-    let quizzes = [];
-    let editingQuizId = null;
-    let questions = [];
-    let questionCounter = 0;
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        window.location.href = "../login/login.component.html";
-        return;
-      }
-
-      loadQuizzes();
-      setupEventListeners();
-    });
-
-    function setupEventListeners() {
-      document.getElementById("btnLogout").addEventListener("click", logout);
-      document.getElementById("btnHome").addEventListener("click", () => {
-        window.location.href = "../menu-inicial/menu-inicial.component.html";
-      });
-      document.getElementById("btnNovoQuiz").addEventListener("click", openNewQuizModal);
-      document.getElementById("btnSalvarQuiz").addEventListener("click", saveQuiz); 
-      document.getElementById("searchInput").addEventListener("input", filterQuizzes);
-      document.getElementById("btnAddQuestion").addEventListener("click", addQuestion);
-    }
-
-    async function loadQuizzes() {
-      try {
-        showLoading(true);
-        const response = await fetch(`${API_BASE}/quizzes`);
-        
-        if (response.ok) {
-          quizzes = await response.json();
-          renderQuizzes(quizzes);
-        } else {
-          showError('Erro ao carregar quizzes');
-        }
-      } catch (error) {
-        showError('Erro de conexão');
-      } finally {
-        showLoading(false);
-      }
-    }
-
-    function getDifficultyBadge(difficulty) {
-      const badges = {
-        'facil': 'success',
-        'medio': 'warning',
-        'dificil': 'danger'
-      };
-      const labels = {
-        'facil': 'Fácil',
-        'medio': 'Médio',
-        'dificil': 'Difícil'
-      };
-      return `<span class="badge bg-${badges[difficulty] || 'secondary'} difficulty-badge">${labels[difficulty] || difficulty}</span>`;
-    }
-
-    function renderQuizzes(quizzesToRender) {
-  const container = document.getElementById("quizzesContainer");
-  const noQuizzesDiv = document.getElementById("noQuizzes");
-
-  if (quizzesToRender.length === 0) {
-    container.innerHTML = '';
-    noQuizzesDiv.style.display = 'block';
-    return;
-  }
-
-  noQuizzesDiv.style.display = 'none';
-  container.innerHTML = quizzesToRender.map(quiz => `
-    <div class="col-md-6 col-lg-4">
-      <div class="card quiz-card h-100 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <h5 class="card-title">${quiz.title}</h5>
-            ${quiz.difficulty ? getDifficultyBadge(quiz.difficulty) : ''}
-          </div>
-          <p class="card-text text-muted">${quiz.description}</p>
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <small class="text-muted">Por: ${quiz.creator_name}</small>
-            ${quiz.time_limit ? `<small class="text-muted"><i class="bi bi-clock"></i> ${Math.round(quiz.time_limit / 60)} min</small>` : ''}
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            ${quiz.category ? `<small class="text-primary">${quiz.category}</small>` : '<span></span>'}
-            <div class="btn-group">
-              <button class="btn btn-sm btn-outline-info" onclick="viewQuizDetails(${quiz.id})" title="Visualizar detalhes">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-primary" onclick="editQuiz(${quiz.id})" title="Editar quiz">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger" onclick="deleteQuiz(${quiz.id})" title="Excluir quiz">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-    function filterQuizzes() {
-      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-      const filtered = quizzes.filter(quiz => 
-        quiz.title.toLowerCase().includes(searchTerm) ||
-        quiz.description.toLowerCase().includes(searchTerm) ||
-        quiz.creator_name.toLowerCase().includes(searchTerm) ||
-        (quiz.category && quiz.category.toLowerCase().includes(searchTerm))
-      );
-      renderQuizzes(filtered);
-    }
-
-    function openNewQuizModal() {
-      editingQuizId = null;
-      questions = [];
-      questionCounter = 0;
-      document.getElementById("modalTitle").textContent = "Novo Quiz";
-      document.getElementById("quizInfoForm").reset();
-      document.getElementById("quizId").value = '';
-      document.getElementById("timeLimit").value = '10';
-      document.getElementById("questionsContainer").innerHTML = '';
-      
-      const infoTab = new bootstrap.Tab(document.getElementById('info-tab'));
-      infoTab.show();
-    }
-
-    async function editQuiz(id) {
-      const quiz = quizzes.find(q => q.id === id);
-      if (!quiz) return;
-
-      editingQuizId = id;
-      document.getElementById("modalTitle").textContent = "Editar Quiz";
-      document.getElementById("quizId").value = id;
-      document.getElementById("title").value = quiz.title;
-      document.getElementById("description").value = quiz.description;
-      document.getElementById("difficulty").value = quiz.difficulty || '';
-      document.getElementById("timeLimit").value = quiz.time_limit ? Math.round(quiz.time_limit / 60) : 10;
-      document.getElementById("category").value = quiz.category || '';
-
-      await loadQuestions(id);
-      new bootstrap.Modal(document.getElementById('quizModal')).show();
-    }
-
-    async function loadQuestions(quizId) {
-      try {
-        const response = await fetch(`${API_BASE}/quizzes/${quizId}/perguntas`);
-        if (response.ok) {
-          const questionsData = await response.json();
-          questions = [];
-          questionCounter = 0;
-          
-          for (const question of questionsData) {
-            const answersResponse = await fetch(`${API_BASE}/quizzes/perguntas/${question.id}/respostas`);
-            const answers = answersResponse.ok ? await answersResponse.json() : [];
-            
-            questions.push({
-              id: question.id,
-              question_text: question.question_text,
-              points: question.points,
-              answers: answers
-            });
-          }
-          renderQuestions();
-        }
-      } catch (error) {
-        console.error('Erro ao carregar perguntas:', error);
-      }
-    }
-
-    function addQuestion() {
-      const questionId = `question_${questionCounter++}`;
-      questions.push({
-        tempId: questionId,
-        question_text: '',
-        points: 10,
-        answers: []
-      });
-      renderQuestions();
-      
-      setTimeout(() => {
-        const newQuestion = document.querySelector(`[data-question-id="${questionId}"]`);
-        if (newQuestion) {
-          newQuestion.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    }
-
-    function removeQuestion(index) {
-      if (confirm('Tem certeza que deseja remover esta pergunta?')) {
-        questions.splice(index, 1);
-        renderQuestions();
-      }
-    }
-
-    function addAnswer(questionIndex) {
-      questions[questionIndex].answers.push({
-        answer_text: '',
-        is_correct: false
-      });
-      renderQuestions();
-    }
-
-    function removeAnswer(questionIndex, answerIndex) {
-      questions[questionIndex].answers.splice(answerIndex, 1);
-      renderQuestions();
-    }
-
-    function setCorrectAnswer(questionIndex, answerIndex) {
-      questions[questionIndex].answers.forEach((answer, index) => {
-        answer.is_correct = index === answerIndex;
-      });
-      renderQuestions();
-    }
-
-    function renderQuestions() {
-      const container = document.getElementById("questionsContainer");
-      
-      if (questions.length === 0) {
-        container.innerHTML = '<p class="text-muted text-center">Nenhuma pergunta adicionada ainda.</p>';
-        return;
-      }
-
-      container.innerHTML = questions.map((question, qIndex) => `
-        <div class="question-card p-3" data-question-id="${question.tempId || question.id}">
-          <div class="d-flex justify-content-between align-items-start mb-3">
-            <h6 class="mb-0">Pergunta ${qIndex + 1}</h6>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(${qIndex})">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label">Texto da pergunta *</label>
-            <textarea class="form-control" rows="2" placeholder="Digite a pergunta..." 
-              onchange="updateQuestion(${qIndex}, 'question_text', this.value)">${question.question_text}</textarea>
-          </div>
-          
-          <div class="row mb-3">
-            <div class="col-md-12"> 
-              <label class="form-label">Pontos</label>
-              <input type="number" class="form-control" min="1" max="100" value="${question.points}" 
-                onchange="updateQuestion(${qIndex}, 'points', parseInt(this.value))">
-            </div>
-          </div>
-          
-          <div class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <label class="form-label mb-0">Respostas</label>
-              <button type="button" class="btn btn-sm btn-outline-success" onclick="addAnswer(${qIndex})">
-                <i class="bi bi-plus-lg"></i> Adicionar Resposta
-              </button>
-            </div>
-            <div class="answers-container">
-              ${question.answers.map((answer, aIndex) => `
-                <div class="answer-option ${answer.is_correct ? 'correct' : ''}">
-                  <div class="d-flex align-items-center">
-                    <div class="form-check me-2">
-                      <input class="form-check-input" type="radio" name="correct_${qIndex}" 
-                        ${answer.is_correct ? 'checked' : ''}
-                        onchange="setCorrectAnswer(${qIndex}, ${aIndex})">
-                    </div>
-                    <input type="text" class="form-control me-2" placeholder="Digite a resposta..." 
-                      value="${answer.answer_text}" 
-                      onchange="updateAnswer(${qIndex}, ${aIndex}, 'answer_text', this.value)">
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAnswer(${qIndex}, ${aIndex})">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-            ${question.answers.length === 0 ? '<p class="text-muted small">Adicione pelo menos 2 respostas</p>' : ''}
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function updateQuestion(index, field, value) {
-      questions[index][field] = value;
-    }
-
-    function updateAnswer(questionIndex, answerIndex, field, value) {
-      questions[questionIndex].answers[answerIndex][field] = value;
-    }
-
-    async function saveQuiz() {
-      const title = document.getElementById("title").value;
-      const description = document.getElementById("description").value;
-      const difficulty = document.getElementById("difficulty").value;
-      const timeLimitInMinutes = parseInt(document.getElementById("timeLimit").value);
-      const category = document.getElementById("category").value;
-      
-      if (!title || !description || !difficulty || isNaN(timeLimitInMinutes) || timeLimitInMinutes <= 0) {
-        showError('Preencha todos os campos obrigatórios na aba Informações e verifique o tempo limite.');
-        const infoTab = new bootstrap.Tab(document.getElementById('info-tab'));
-        infoTab.show();
-        return;
-      }
-
-      if (questions.some(q => !q.question_text.trim() || q.answers.length < 2 || !q.answers.some(a => a.is_correct))) {
-          if (!confirm("Algumas perguntas estão incompletas ou sem resposta correta. Deseja salvar mesmo assim? Perguntas incompletas não serão salvas.")) {
-              const questionsTab = new bootstrap.Tab(document.getElementById('questions-tab'));
-              questionsTab.show();
-              return;
-          }
-      }
-
-      const token = localStorage.getItem("token");
-      const timeLimitInSeconds = timeLimitInMinutes * 60;
-      const quizData = { title, description, difficulty, time_limit: timeLimitInSeconds, category };
-      
-      try {
-        let quizId = editingQuizId;
-        
-        if (editingQuizId) {
-          const response = await fetch(`${API_BASE}/quizzes/${editingQuizId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(quizData)
-          });
-          
-          if (!response.ok) {
-            const error = await response.json();
-            showError(error.mensagem || 'Erro ao atualizar quiz');
-            return;
-          }
-        } else {
-          const response = await fetch(`${API_BASE}/quizzes`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(quizData)
-          });
-          
-          if (response.ok) {
-            const result = await response.json();
-            quizId = result.quizId;
-          } else {
-            const error = await response.json();
-            showError(error.mensagem || 'Erro ao criar quiz');
-            return;
-          }
-        }
-
-        if (quizId) {
-            await saveQuestions(quizId, token);
-        } else {
-            showError('Não foi possível obter o ID do Quiz para salvar as perguntas.');
-            return;
-        }
-        
-        const quizModalInstance = bootstrap.Modal.getInstance(document.getElementById('quizModal'));
-        if (quizModalInstance) {
-            quizModalInstance.hide();
-        }
-        showSuccess(editingQuizId ? 'Quiz atualizado com sucesso!' : 'Quiz criado com sucesso!');
-        loadQuizzes();
-        
-      } catch (error) {
-        console.error("Erro em saveQuiz:", error);
-        showError('Erro de conexão ao salvar o quiz.');
-      }
-    }
-
-    async function saveQuestions(quizId, token) {
-      for (const question of questions) {
-        if (!question.question_text.trim() || question.answers.length < 2) {
-          console.warn("Pulando pergunta inválida:", question);
-          continue;
-        }
-        
-        const hasCorrectAnswer = question.answers.some(a => a.is_correct);
-        if (!hasCorrectAnswer) {
-          console.warn("Pulando pergunta sem resposta correta:", question);
-          continue;
-        }
-
-        let questionIdOnApi;
-        
-        const questionPayload = {
-            question_text: question.question_text,
-            points: question.points
-        };
-
-        if (question.id && !question.tempId) {
-          const response = await fetch(`${API_BASE}/quizzes/perguntas/${question.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(questionPayload)
-          });
-          if(response.ok) {
-            questionIdOnApi = question.id;
-          } else {
-            console.error("Erro ao atualizar pergunta:", await response.text());
-            continue;
-          }
-        } else {
-          const response = await fetch(`${API_BASE}/quizzes/${quizId}/perguntas`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(questionPayload)
-          });
-          
-          if (response.ok) {
-            const result = await response.json();
-            questionIdOnApi = result.questionId;
-          } else {
-             console.error("Erro ao criar pergunta:", await response.text());
-             continue;
-          }
-        }
-
-        if (questionIdOnApi) {
-          for (const answer of question.answers) {
-            if (!answer.answer_text.trim()) {
-                console.warn("Pulando resposta inválida:", answer);
-                continue;
-            }
-            
-            const answerPayload = {
-                answer_text: answer.answer_text,
-                is_correct: answer.is_correct
-            };
-
-            if (answer.id && !answer.tempId) {
-              await fetch(`${API_BASE}/quizzes/perguntas/${questionIdOnApi}/respostas/${answer.id}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(answerPayload)
-              }).catch(err => console.error("Erro ao atualizar resposta:", err));
-            } else {
-              await fetch(`${API_BASE}/quizzes/perguntas/${questionIdOnApi}/respostas`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(answerPayload)
-              }).catch(err => console.error("Erro ao criar resposta:", err));
-            }
-          }
-        }
-      }
-    }
-
-    async function viewQuizDetails(id) {
-  const quiz = quizzes.find(q => q.id === id);
-  if (!quiz) return;
-
-  try {
-    // Carrega as perguntas do quiz
-    const response = await fetch(`${API_BASE}/quizzes/${id}/perguntas`);
-    let questionsData = [];
-    
-    if (response.ok) {
-      questionsData = await response.json();
-      
-      // Carrega as respostas para cada pergunta
-      for (const question of questionsData) {
-        const answersResponse = await fetch(`${API_BASE}/quizzes/perguntas/${question.id}/respostas`);
-        question.answers = answersResponse.ok ? await answersResponse.json() : [];
-      }
-    }
-
-    // Cria o modal de visualização
-    const modalHtml = `
-      <div class="modal fade" id="viewQuizModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Detalhes do Quiz</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <div class="quiz-details">
-                <div class="row mb-3">
-                  <div class="col-md-8">
-                    <h4 class="text-primary">${quiz.title}</h4>
-                    <p class="text-muted">${quiz.description}</p>
-                  </div>
-                  <div class="col-md-4 text-end">
-                    ${quiz.difficulty ? getDifficultyBadge(quiz.difficulty) : ''}
-                  </div>
-                </div>
-                
-                <div class="row mb-4">
-                  <div class="col-md-3">
-                    <small class="text-muted d-block">Criado por:</small>
-                    <strong>${quiz.creator_name}</strong>
-                  </div>
-                  <div class="col-md-3">
-                    <small class="text-muted d-block">Tempo limite:</small>
-                    <strong>${quiz.time_limit ? Math.round(quiz.time_limit / 60) + ' min' : 'Não definido'}</strong>
-                  </div>
-                  <div class="col-md-3">
-                    <small class="text-muted d-block">Categoria:</small>
-                    <strong>${quiz.category || 'Não definida'}</strong>
-                  </div>
-                  <div class="col-md-3">
-                    <small class="text-muted d-block">Perguntas:</small>
-                    <strong>${questionsData.length}</strong>
-                  </div>
-                </div>
-
-                <hr>
-
-                <h5 class="mb-3">Perguntas e Respostas</h5>
-                ${questionsData.length > 0 ? questionsData.map((question, index) => `
-                  <div class="question-preview mb-4 p-3 border rounded">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <h6 class="mb-0">Pergunta ${index + 1}</h6>
-                      <span class="badge bg-info">${question.points} pts</span>
-                    </div>
-                    <p class="mb-3">${question.question_text}</p>
-                    
-                    <div class="answers-preview">
-                      ${question.answers.map(answer => `
-                        <div class="answer-preview p-2 mb-2 rounded ${answer.is_correct ? 'bg-success bg-opacity-10 border-success' : 'bg-light'}">
-                          <div class="d-flex align-items-center">
-                            ${answer.is_correct ? '<i class="bi bi-check-circle-fill text-success me-2"></i>' : '<i class="bi bi-circle me-2 text-muted"></i>'}
-                            <span class="text-dark">${answer.answer_text}</span>
-                          </div>
-                        </div>
-                      `).join('')}
-                    </div>
-                  </div>
-                `).join('') : '<p class="text-muted text-center">Este quiz não possui perguntas cadastradas.</p>'}
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-              <button type="button" class="btn btn-primary" onclick="editQuiz(${id})">
-                <i class="bi bi-pencil me-2"></i>Editar Quiz
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Remove modal anterior se existir
-    const existingModal = document.getElementById('viewQuizModal');
-    if (existingModal) {
-      existingModal.remove();
-    }
-
-    // Adiciona o modal ao DOM
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-    // Exibe o modal
-    const modal = new bootstrap.Modal(document.getElementById('viewQuizModal'));
-    modal.show();
-
-    // Remove o modal do DOM quando fechado
-    document.getElementById('viewQuizModal').addEventListener('hidden.bs.modal', function() {
-      this.remove();
-    });
-
-  } catch (error) {
-    console.error('Erro ao carregar detalhes do quiz:', error);
-    showError('Erro ao carregar os detalhes do quiz');
-  }
-}
-
-    async function deleteQuiz(id) {
-      if (!confirm('Tem certeza que deseja excluir este quiz? Todas as perguntas e respostas também serão removidas.')) return;
-
-      const token = localStorage.getItem("token");
-      
-      try {
-        const response = await fetch(`${API_BASE}/quizzes/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          showSuccess('Quiz excluído com sucesso!');
-          loadQuizzes();
-        } else {
-          const error = await response.json();
-          showError(error.mensagem || 'Erro ao excluir quiz');
-        }
-      } catch (error) {
-        showError('Erro de conexão');
-      }
-    }
-
-    function showLoading(show) {
-      document.getElementById("loadingSpinner").style.display = show ? 'block' : 'none';
-    }
-
-    function showSuccess(message) {
-      alert(message);
-    }
-
-    function showError(message) {
-      alert('Erro: ' + message);
-    }
-
-    function logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      window.location.href = "../login/login.component.html";
-    }
-    
-  </script>
+  <script type="module" src="../../js/quiz-manager/main.js"></script>
 </body>
 </html>

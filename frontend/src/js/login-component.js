@@ -18,8 +18,7 @@ document.getElementById("formLogin").addEventListener("submit", async function (
     if (response.ok) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.usuario.username);
-      alert("Login bem-sucedido!");
-      window.location.href = "../menu-inicial/menu-inicial.component.html";
+      window.location.href = "../menu-inicial/menu-inicial-component.html";
     } else {
       alert(data.mensagem || "Falha no login.");
     }
