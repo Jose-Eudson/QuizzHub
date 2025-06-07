@@ -20,15 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingSpinner.style.display = show ? 'block' : 'none';
     };
 
-    const addEventListenersToButtons = () => {
-        document.querySelectorAll('.start-quiz-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const quizId = button.dataset.quizId;
-                window.location.href = `quiz-player.html?quizId=${quizId}`;
-            });
-        });
-    };
-
     const renderQuizzes = (quizzes) => {
         container.innerHTML = '';
         if (quizzes.length === 0) {
@@ -60,16 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <small class="text-muted">Por: ${quiz.creator_name}</small>
                     <small class="text-muted"><i class="bi bi-clock"></i> ${timeInMinutes} min</small>
                   </div>
-                   <button class="btn btn-primary mt-auto start-quiz-btn" data-quiz-id="${quiz.id}">
-                     <i class="bi bi-play-circle-fill me-2"></i>Iniciar Quiz
-                   </button>
                 </div>
               </div>
             </div>
             `;
         }).join('');
-
-        addEventListenersToButtons();
     };
 
     const applyFilters = () => {

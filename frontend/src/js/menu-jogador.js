@@ -1,28 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "/"; // Redireciona para a raiz
+    window.location.href = "/";
     return;
   }
 
-  // Garante que apenas admins acessem esta página
   const userRole = localStorage.getItem("userRole");
-  if(userRole !== 'admin') {
-      localStorage.clear();
-      window.location.href = "/";
-      return;
+  if (userRole !== 'user') {
+    localStorage.clear();
+    window.location.href = "/";
+    return;
   }
 
-  const btnLogout = document.getElementById("btnLogout");
-  if (btnLogout) {
-    btnLogout.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      localStorage.removeItem("userRole"); // Lembre-se de remover a role também
-      window.location.href = "/"; // Redireciona para a raiz da aplicação
-    });
-  }
+  // Lógica do botão de Sair
+  document.getElementById("btnLogout").addEventListener("click", () => {
+    localStorage.clear(); // Limpa todo o storage
+    window.location.href = "/";
+  });
 
+  // Lógica do formulário para Entrar em Jogo (movida para cá)
   const joinGameForm = document.getElementById("joinGameForm");
   if (joinGameForm) {
     joinGameForm.addEventListener("submit", async (e) => {

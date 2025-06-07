@@ -67,8 +67,8 @@ async function handleSaveQuiz() {
     if (!quizId) throw new Error("ID do Quiz não foi encontrado após salvar.");
 
     await Promise.all([...state.deleted.questionIds].map(
-  questionId => api.deleteQuestion(quizId, questionId)
-));
+      questionId => api.deleteQuestion(quizId, questionId)
+    ));
 
     //await Promise.all([...state.deleted.answerIds].map(id => api.deleteAnswer(id)));
 
@@ -80,13 +80,23 @@ async function handleSaveQuiz() {
         question_text: question.question_text, 
         points: question.points 
       };
+      
       const savedQuestion = await api.saveQuestion(quizId, questionPayload, questionIdForApi);
+
+      // =========================================================================
+      // LINHA DE DEPURAÇÃO ADICIONADA AQUI
+      // Verifique no console do navegador o que o backend retorna para 'savedQuestion'.
+      // Ele DEVE ser um objeto com uma propriedade 'id'.
+      console.log('RESPOSTA DO BACKEND (saveQuestion):', savedQuestion);
+      // =========================================================================
 
       for (const answer of question.answers) {
         const isNewAnswer = !answer.id || String(answer.id).startsWith('temp-');
         const answerIdForApi = isNewAnswer ? null : answer.id;
         
         const answerPayload = { answer_text: answer.answer_text, is_correct: answer.is_correct };
+
+        // Esta linha irá falhar se 'savedQuestion.id' for undefined.
         await api.saveAnswer(quizId, savedQuestion.id, answerPayload, answerIdForApi);
       }
     }

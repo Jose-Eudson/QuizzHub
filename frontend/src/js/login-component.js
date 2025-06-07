@@ -7,9 +7,7 @@ document.getElementById("formLogin").addEventListener("submit", async function (
   try {
     const response = await fetch("http://localhost:3000/api/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password: senha })
     });
 
@@ -18,7 +16,17 @@ document.getElementById("formLogin").addEventListener("submit", async function (
     if (response.ok) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.usuario.username);
-      window.location.href = "../menu-inicial/menu-inicial-component.html";
+
+      // Decodifica o token para obter a role
+      const payload = JSON.parse(atob(data.token.split('.')[1]));
+      localStorage.setItem("userRole", payload.role);
+
+      // Redireciona com base na role
+      if (payload.role === 'admin') {
+        window.location.href = "../menu-inicial/menu-inicial-component.html";
+      } else {
+        window.location.href = "../menu-inicial/menu-jogador.html";
+      }
     } else {
       alert(data.mensagem || "Falha no login.");
     }

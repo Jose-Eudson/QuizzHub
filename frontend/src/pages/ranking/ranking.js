@@ -1,29 +1,42 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-        window.location.href = "../login/login.component.html";
+        window.location.href = "../login/login-component.html";
         return;
     }
-    
-    const mockRanking = [
-        { username: 'jogador_mestre', total_score: 1500 },
-        { username: 'sabio_do_quiz', total_score: 1350 },
-        { username: localStorage.getItem('username') || 'voce', total_score: 1200 },
-        { username: 'geek_nerd', total_score: 1100 },
-        { username: 'pensa_rapido', total_score: 950 },
-    ].sort((a, b) => b.total_score - a.total_score);
 
     const rankingTableBody = document.getElementById('rankingTableBody');
+    const loadingSpinner = document.getElementById('loadingSpinnerRanking');
+    const noRankingMessage = document.getElementById('noRankingMessage');
     
-    if (mockRanking.length > 0) {
-        rankingTableBody.innerHTML = mockRanking.map((player, index) => `
-            <tr>
-                <th scope="row">${index + 1}</th>
-                <td>${player.username}</td>
-                <td>${player.total_score}</td>
-            </tr>
-        `).join('');
-    } else {
-        document.getElementById('rankingTableContainer').innerHTML = '<p class="text-center text-muted">Ainda não há ranking para exibir.</p>';
+    loadingSpinner.style.display = 'block';
+
+    try {
+        const response = await fetch("http://localhost:3000/api/auth/ranking", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Não foi possível carregar o ranking.');
+
+        const rankingData = await response.json();
+        loadingSpinner.style.display = 'none';
+
+        if (rankingData.length > 0) {
+            document.getElementById('rankingTableContainer').style.display = 'block';
+            rankingTableBody.innerHTML = rankingData.map((player, index) => `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${player.nickname}</td>
+                    <td>${player.total_score}</td>
+                </tr>
+            `).join('');
+        } else {
+            noRankingMessage.style.display = 'block';
+        }
+    } catch (error) {
+        loadingSpinner.style.display = 'none';
+        noRankingMessage.textContent = error.message;
+        noRankingMessage.style.display = 'block';
+        console.error(error);
     }
 });
