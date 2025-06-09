@@ -11,7 +11,7 @@
 
   <nav class="navbar navbar-dark bg-dark shadow-sm px-4 py-2">
     <span class="navbar-brand fw-bold fs-4">QuizHub - Host</span>
-    <a href="../menu-inicial/menu-inicial-component.html" class="btn btn-outline-light">Voltar</a>
+    <a href="../menu-inicial/menu-inicial-component.html" class="btn btn-outline-light">Voltar ao Menu</a>
   </nav>
 
   <div class="container mt-4">
@@ -44,45 +44,49 @@
     </div>
 
     <div id="gameSection" class="d-none">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5>Pergunta <span id="questionNumber">1</span></h5>
-            <div>
-              <span class="badge bg-primary" id="timeLeft">30s</span>
-              <span class="badge bg-info ms-2" id="answeredCount">0/0 responderam</span>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 id="questionHeader">Aguardando início...</h5>
+                    <div class="w-50">
+                        <div class="progress" style="height: 25px;">
+                            <div id="answersProgress" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%; font-size: 1rem;">
+                                <span id="answeredCountText">0/0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="questionContent" class="text-center py-5 bg-light rounded">
+                    <h2 id="questionText" class="display-6">Carregando pergunta...</h2>
+                </div>
             </div>
-          </div>
-          
-          <div id="questionContent">
-            <h4 id="questionText"></h4>
-            <div class="row mt-4" id="answersDisplay"></div>
-          </div>
-
-          <div class="mt-4">
-            <button id="showResultsBtn" class="btn btn-warning me-2" disabled>Mostrar Resultados</button>
-            <button id="nextQuestionBtn" class="btn btn-primary" disabled>Próxima Pergunta</button>
-          </div>
         </div>
-      </div>
-
-      <div class="card mt-3">
-        <div class="card-body">
-          <h5>Ranking Atual</h5>
-          <div id="currentRanking"></div>
-        </div>
-      </div>
     </div>
 
     <div id="resultsSection" class="d-none">
-      <div class="card">
-        <div class="card-body text-center">
-          <h2>Jogo Finalizado!</h2>
-          <h4 class="mb-4">Ranking Final</h4>
-          <div id="finalRanking"></div>
-          <a href="../menu-inicial/menu-inicial.component.html" class="btn btn-primary mt-4">Voltar ao Menu</a>
+        <div class="card">
+            <div class="card-body text-center">
+                <h2>Jogo Finalizado!</h2>
+                <h4 class="mb-4">Ranking Final</h4>
+                <div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover text-center mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Posição</th>
+                        <th scope="col">Jogador</th>
+                        <th scope="col">Pontuação</th>
+                    </tr>
+                </thead>
+                <tbody id="finalRankingBody">
+                    </tbody>
+            </table>
         </div>
-      </div>
+    </div>
+</div>
+            </div>
+        </div>
     </div>
   </div>
 

@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Lógica do botão de Sair
   document.getElementById("btnLogout").addEventListener("click", () => {
     localStorage.clear(); // Limpa todo o storage
-    window.location.href = "/";
+    window.location.href = "../login/login-component.html";
   });
 
   // Lógica do formulário para Entrar em Jogo (movida para cá)

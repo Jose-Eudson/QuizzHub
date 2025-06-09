@@ -10,6 +10,7 @@
 <body class="bg-light">
 
   <nav class="navbar navbar-dark bg-dark shadow-sm px-4 py-2">
+    <a href="../menu-inicial/menu-inicial-component.html" class="btn btn-primary mt-4">Voltar ao Menu</a>
     <span class="navbar-brand fw-bold fs-4">QuizHub - <span id="playerName">Jogador</span></span>
     <span class="badge bg-success fs-6">Pontos: <span id="playerScore">0</span></span>
   </nav>
@@ -57,10 +58,22 @@
           <h2 class="text-primary" id="finalScore">0</h2>
           <hr>
           <h5>Ranking Final</h5>
-          <div id="finalRankingDisplay"></div>
+          <div class="table-responsive">
+  <table class="table table-striped table-hover text-center">
+    <thead>
+      <tr>
+        <th scope="col">Posição</th>
+        <th scope="col">Jogador</th>
+        <th scope="col">Pontuação</th>
+      </tr>
+    </thead>
+    <tbody id="finalRankingBody">
+      </tbody>
+  </table>
+</div>
         </div>
       </div>
-      <a href="../menu-inicial/menu-inicial-component.html" class="btn btn-primary mt-4">Voltar ao Menu</a>
+      <a href="../menu-inicial/menu-jogador.html" class="btn btn-primary mt-4">Voltar ao Menu</a>
     </div>
 
   </div>

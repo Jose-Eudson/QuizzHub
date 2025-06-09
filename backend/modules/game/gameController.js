@@ -56,8 +56,6 @@ const gameController = (io) => {
       );
       const player = { id: result.insertId, nickname: nickname, score: 0 };
 
-      // Usando o 'io' injetado para emitir o evento
-      io.to(`host_${game.id}`).emit('player:joined', player);
       
       res.status(200).json({
         mensagem: 'Você entrou no jogo!',

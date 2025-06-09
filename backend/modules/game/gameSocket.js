@@ -3,153 +3,181 @@ const pool = require('../db');
 const activeGames = new Map();
 
 async function sendNextQuestion(io, gameId) {
-  const game = activeGames.get(gameId);
-  if (!game) return;
+    const game = activeGames.get(gameId);
+    if (!game) return;
 
-  if (game.currentQuestionIndex >= game.questions.length) {
-   
-    io.to(`game_${gameId}`).emit('game:finished', { finalScores: game.players });
-    activeGames.delete(gameId); // Limpa o jogo da memória
-    await pool.query("UPDATE games SET status = 'finished' WHERE id = ?", [gameId]);
-    return;
-  }
-  
-  const question = game.questions[game.currentQuestionIndex];
-  
-  const questionForPlayers = {
-    id: question.id,
-    question_text: question.question_text,
-    points: question.points,
-    answers: question.answers.map(a => ({ id: a.id, answer_text: a.answer_text }))
-  };
+    if (game.currentQuestionIndex >= game.questions.length) {
+        const finalRanking = Object.values(game.players).sort((a, b) => b.score - a.score);
+        io.to(`game_${gameId}`).emit('game:finished', { finalRanking });
 
-  io.to(`game_${gameId}`).emit('game:nextQuestion', {
-    question: questionForPlayers,
-    questionIndex: game.currentQuestionIndex,
-    totalQuestions: game.questions.length
-  });
+        clearTimeout(game.questionTimer);
+        activeGames.delete(gameId);
+        await pool.query("UPDATE games SET status = 'finished', ended_at = NOW() WHERE id = ?", [gameId]);
+        console.log(`Jogo ${gameId} finalizado e limpo da memória.`);
+        return;
+    }
+    
+    // MODIFICAÇÃO: Zera a contagem de respostas para a nova pergunta.
+    game.answerCount = 0;
 
-  game.questionTimer = setTimeout(() => {
-    showQuestionResults(io, gameId);
-  }, 20000); 
-}
+    const question = game.questions[game.currentQuestionIndex];
+    const questionForPlayers = {
+        id: question.id,
+        question_text: question.question_text,
+        answers: question.answers.map(a => ({ id: a.id, answer_text: a.answer_text })),
+    };
 
-async function showQuestionResults(io, gameId) {
-  const game = activeGames.get(gameId);
-  if (!game) return;
-
-  clearTimeout(game.questionTimer); // Para o timer
-
-  const currentQuestion = game.questions[game.currentQuestionIndex];
-  const correctAnswerId = currentQuestion.answers.find(a => a.is_correct).id;
-
-  const ranking = Object.values(game.players).sort((a, b) => b.score - a.score);
-
-  io.to(`game_${gameId}`).emit('game:questionResult', {
-    correctAnswerId,
-    scores: ranking
-  });
+    io.to(`game_${gameId}`).emit('game:nextQuestion', {
+        question: questionForPlayers,
+        questionIndex: game.currentQuestionIndex,
+        totalQuestions: game.questions.length
+    });
+    
+    game.currentQuestionIndex++;
+    
+    game.questionTimer = setTimeout(() => {
+        sendNextQuestion(io, gameId);
+    }, 15000);
 }
 
 function initializeGameSockets(io) {
-  io.on('connection', (socket) => {
-    // --- Lógica do Lobby (já implementada) ---
-    socket.on('host:join', ({ gameId }) => socket.join(`host_${gameId}`));
-    socket.on('player:join', ({ gameId }) => socket.join(`game_${gameId}`));
-    
-    // --- Lógica da Partida ---
+    io.on('connection', (socket) => {
+        console.log(`Socket conectado: ${socket.id}`);
 
-    // Host inicia o jogo
-    socket.on('game:start', async ({ gameId }) => {
-      try {
-        // 1. Mudar status do jogo no DB
-        await pool.query("UPDATE games SET status = 'in_progress' WHERE id = ?", [gameId]);
+        socket.on('host:join', (data) => {
+            const gameId = parseInt(data.gameId, 10);
+            if (isNaN(gameId)) return;
 
-        const [quizRows] = await pool.query(`
-          SELECT 
-            q.id as question_id, q.question_text, q.points,
-            a.id as answer_id, a.answer_text, a.is_correct
-          FROM questions q
-          JOIN answers a ON q.id = a.question_id
-          WHERE q.quiz_id = (SELECT quiz_id FROM games WHERE id = ?)
-          ORDER BY q.id, a.id;
-        `, [gameId]);
+            socket.join(`host_${gameId}`);
+            socket.join(`game_${gameId}`);
+            if (!activeGames.has(gameId)) {
+                activeGames.set(gameId, {
+                    players: {},
+                    questions: [],
+                    currentQuestionIndex: 0,
+                    questionTimer: null,
+                    answerCount: 0
+                });
+            }
+            console.log(`Host ${socket.id} entrou na sala do jogo ${gameId}.`);
+        });
 
-        const questionsMap = new Map();
-        quizRows.forEach(row => {
-          if (!questionsMap.has(row.question_id)) {
-            questionsMap.set(row.question_id, {
-              id: row.question_id,
-              question_text: row.question_text,
-              points: row.points,
-              answers: []
+        socket.on('player:join', (data) => {
+            const gameId = parseInt(data.gameId, 10);
+            const { nickname, playerGameId } = data;
+            if (isNaN(gameId)) return;
+
+            socket.join(`game_${gameId}`);
+            const game = activeGames.get(gameId);
+            if (game && typeof game.players === 'object' && !game.players[playerGameId]) {
+                game.players[playerGameId] = { id: playerGameId, nickname, score: 0 };
+                // A linha abaixo foi removida na correção anterior para evitar duplicidade.
+                io.to(`host_${gameId}`).emit('player:joined', game.players[playerGameId]);
+            }
+            console.log(`Jogador ${nickname} (${socket.id}) entrou no jogo ${gameId}`);
+        });
+
+        socket.on('game:start', async (data) => {
+            const gameId = parseInt(data.gameId, 10);
+            if (isNaN(gameId)) return;
+            
+            try {
+                const game = activeGames.get(gameId);
+                if (!game) throw new Error(`Jogo ${gameId} não encontrado na memória.`);
+
+                const [gameRows] = await pool.query("SELECT quiz_id FROM games WHERE id = ?", [gameId]);
+                if (gameRows.length === 0) throw new Error("Jogo não encontrado no DB.");
+                const quizId = gameRows[0].quiz_id;
+
+                const [questionRows] = await pool.query(`
+                    SELECT 
+                        ques.id AS question_id, ques.question_text, ques.points,
+                        ans.id AS answer_id, ans.answer_text, ans.is_correct
+                    FROM questions ques
+                    LEFT JOIN answers ans ON ques.id = ans.question_id
+                    WHERE ques.quiz_id = ?
+                    ORDER BY ques.id, ans.id
+                `, [quizId]);
+
+                if (questionRows.length === 0 || !questionRows[0].question_id) {
+                    io.to(`host_${gameId}`).emit('game:error', { message: 'Erro: Este quiz não contém perguntas.' });
+                    return;
+                }
+
+                const questionMap = new Map();
+                for (const row of questionRows) {
+                    if (!questionMap.has(row.question_id)) {
+                        questionMap.set(row.question_id, {
+                            id: row.question_id,
+                            question_text: row.question_text,
+                            points: row.points,
+                            answers: [],
+                            correctAnswerId: null
+                        });
+                    }
+                    if (row.answer_id) {
+                        const question = questionMap.get(row.question_id);
+                        question.answers.push({ id: row.answer_id, answer_text: row.answer_text });
+                        if (row.is_correct) {
+                            question.correctAnswerId = row.answer_id;
+                        }
+                    }
+                }
+
+                game.questions = Array.from(questionMap.values());
+                game.currentQuestionIndex = 0;
+                
+                await pool.query("UPDATE games SET status = 'in_progress' WHERE id = ?", [gameId]);
+                io.to(`game_${gameId}`).emit('game:started');
+                console.log(`Jogo ${gameId} iniciado para ${Object.keys(game.players).length} jogadores.`);
+
+                setTimeout(() => sendNextQuestion(io, gameId), 1500);
+
+            } catch (error) {
+                console.error("Erro ao iniciar o jogo:", error);
+                io.to(`host_${gameId}`).emit('game:error', { message: 'Ocorreu um erro interno ao iniciar o jogo.' });
+            }
+        });
+
+        socket.on('player:answer', async (data) => {
+            const gameId = parseInt(data.gameId, 10);
+            const { playerGameId, questionId, answerId } = data;
+            if (isNaN(gameId)) return;
+
+            const game = activeGames.get(gameId);
+            if (!game || !game.players || !game.players[playerGameId] || game.currentQuestionIndex === 0) return;
+
+            const currentQuestion = game.questions[game.currentQuestionIndex - 1];
+            if (!currentQuestion || currentQuestion.id !== questionId) return;
+
+            // MODIFICAÇÃO: Incrementa a contagem de respostas.
+            if(game.answerCount !== undefined) {
+                game.answerCount++;
+            }
+
+            let pointsEarned = 0;
+            if (answerId === currentQuestion.correctAnswerId) {
+                pointsEarned = currentQuestion.points || 10;
+            }
+
+            game.players[playerGameId].score += pointsEarned;
+            
+            await pool.query(
+                'INSERT INTO scores (player_game_id, question_id, answer_id, points_earned) VALUES (?, ?, ?, ?)',
+                [playerGameId, questionId, answerId, pointsEarned]
+            );
+
+            // MODIFICAÇÃO: Envia a contagem atualizada para o host.
+            io.to(`host_${gameId}`).emit('player:answeredUpdate', {
+                answeredCount: game.answerCount,
+                totalPlayers: Object.keys(game.players).length
             });
-          }
-          questionsMap.get(row.question_id).answers.push({
-            id: row.answer_id,
-            answer_text: row.answer_text,
-            is_correct: !!row.is_correct
-          });
         });
 
-        activeGames.set(gameId, {
-          questions: Array.from(questionsMap.values()),
-          players: {}, 
-          currentQuestionIndex: 0,
-          questionTimer: null,
+        socket.on('disconnect', () => {
+            console.log(`Socket desconectado: ${socket.id}`);
         });
-
-        io.to(`game_${gameId}`).emit('game:started');
-        
-        setTimeout(() => sendNextQuestion(io, gameId), 2000);
-
-      } catch (error) {
-        console.error("Erro ao iniciar o jogo:", error);
-      }
     });
-
-    socket.on('player:answer', ({ gameId, playerGameId, questionId, answerId }) => {
-      const game = activeGames.get(gameId);
-      if (!game) return;
-
-      const question = game.questions.find(q => q.id === questionId);
-      if (!question) return;
-
-      const correctAnswer = question.answers.find(a => a.is_correct);
-      const isCorrect = correctAnswer.id === answerId;
-      
-      let pointsEarned = 0;
-      if (isCorrect) {
-        pointsEarned = 1000; 
-      }
-
-      if (!game.players[playerGameId]) {
-        const nickname = "Jogador"; 
-        game.players[playerGameId] = { id: playerGameId, nickname, score: 0 };
-      }
-      game.players[playerGameId].score += pointsEarned;
-      
-      socket.emit('player:answerResult', { 
-        isCorrect,
-        newTotalScore: game.players[playerGameId].score 
-      });
-
-      io.to(`host_${gameId}`).emit('player:answeredUpdate', { 
-
-       });
-    });
-
-    socket.on('game:next', ({ gameId }) => {
-      const game = activeGames.get(gameId);
-      if (game) {
-        game.currentQuestionIndex++;
-        sendNextQuestion(io, gameId);
-      }
-    });
-
-    socket.on('disconnect', () => {
-    });
-  });
 }
 
 module.exports = { initializeGameSockets };

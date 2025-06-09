@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "/"; // Redireciona para a raiz
+    window.location.href = "../login/login-component.html";
     return;
   }
 
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userRole = localStorage.getItem("userRole");
   if(userRole !== 'admin') {
       localStorage.clear();
-      window.location.href = "/";
+      window.location.href = "../login/login-component.html";
       return;
   }
 
@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btnLogout.addEventListener("click", () => {
       localStorage.removeItem("token");
       localStorage.removeItem("username");
-      localStorage.removeItem("userRole"); // Lembre-se de remover a role também
-      window.location.href = "/"; // Redireciona para a raiz da aplicação
+      localStorage.removeItem("userRole"); 
+      window.location.href = "../login/login-component.html";
     });
   }
 
