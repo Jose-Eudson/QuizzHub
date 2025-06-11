@@ -12,32 +12,28 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Lógica do botão de Sair
   document.getElementById("btnLogout").addEventListener("click", () => {
-    localStorage.clear(); // Limpa todo o storage
+    localStorage.clear();
     window.location.href = "../login/login-component.html";
   });
 
-  // Lógica do formulário para Entrar em Jogo (movida para cá)
   const joinGameForm = document.getElementById("joinGameForm");
   if (joinGameForm) {
     joinGameForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       
       const pin = document.getElementById("gamePin").value;
-      const nickname = document.getElementById("nickname").value;
+      const nickname = localStorage.getItem("username"); 
 
       if (!pin || !nickname) {
-        alert("Por favor, preencha todos os campos.");
+        alert("O PIN do jogo é obrigatório. Se o erro persistir, faça o login novamente.");
         return;
       }
 
       try {
         const response = await fetch("http://localhost:3000/api/games/join", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ pin: parseInt(pin), nickname })
         });
 

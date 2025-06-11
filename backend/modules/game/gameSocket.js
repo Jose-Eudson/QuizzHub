@@ -17,7 +17,6 @@ async function sendNextQuestion(io, gameId) {
         return;
     }
     
-    // MODIFICAÇÃO: Zera a contagem de respostas para a nova pergunta.
     game.answerCount = 0;
 
     const question = game.questions[game.currentQuestionIndex];
@@ -71,7 +70,6 @@ function initializeGameSockets(io) {
             const game = activeGames.get(gameId);
             if (game && typeof game.players === 'object' && !game.players[playerGameId]) {
                 game.players[playerGameId] = { id: playerGameId, nickname, score: 0 };
-                // A linha abaixo foi removida na correção anterior para evitar duplicidade.
                 io.to(`host_${gameId}`).emit('player:joined', game.players[playerGameId]);
             }
             console.log(`Jogador ${nickname} (${socket.id}) entrou no jogo ${gameId}`);
@@ -150,7 +148,6 @@ function initializeGameSockets(io) {
             const currentQuestion = game.questions[game.currentQuestionIndex - 1];
             if (!currentQuestion || currentQuestion.id !== questionId) return;
 
-            // MODIFICAÇÃO: Incrementa a contagem de respostas.
             if(game.answerCount !== undefined) {
                 game.answerCount++;
             }
@@ -167,7 +164,6 @@ function initializeGameSockets(io) {
                 [playerGameId, questionId, answerId, pointsEarned]
             );
 
-            // MODIFICAÇÃO: Envia a contagem atualizada para o host.
             io.to(`host_${gameId}`).emit('player:answeredUpdate', {
                 answeredCount: game.answerCount,
                 totalPlayers: Object.keys(game.players).length

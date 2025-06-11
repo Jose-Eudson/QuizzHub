@@ -1,5 +1,3 @@
-// js/ui.js
-
 function getDifficultyBadge(difficulty) {
   const badges = { facil: 'success', medio: 'warning', dificil: 'danger' };
   const labels = { facil: 'Fácil', medio: 'Médio', dificil: 'Difícil' };

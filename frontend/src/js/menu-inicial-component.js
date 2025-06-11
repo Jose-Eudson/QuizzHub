@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Garante que apenas admins acessem esta página
   const userRole = localStorage.getItem("userRole");
   if(userRole !== 'admin') {
       localStorage.clear();

@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('player:joined', (player) => {
-        // Previne duplicação na lista do host
         if (!state.players.find(p => p.id === player.id)) {
             state.players.push(player);
             updatePlayerList();
@@ -106,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
         progressTextEl.textContent = `0/${state.players.length}`;
     });
 
-    // MODIFICAÇÃO: Novo listener para atualizar a barra de progresso.
     socket.on('player:answeredUpdate', (data) => {
         const percentage = data.totalPlayers > 0 ? (data.answeredCount / data.totalPlayers) * 100 : 0;
         const progressEl = document.getElementById('answersProgress');

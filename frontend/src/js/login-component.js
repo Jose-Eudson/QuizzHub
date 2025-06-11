@@ -17,11 +17,9 @@ document.getElementById("formLogin").addEventListener("submit", async function (
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.usuario.username);
 
-      // Decodifica o token para obter a role
       const payload = JSON.parse(atob(data.token.split('.')[1]));
       localStorage.setItem("userRole", payload.role);
 
-      // Redireciona com base na role
       if (payload.role === 'admin') {
         window.location.href = "../menu-inicial/menu-inicial-component.html";
       } else {

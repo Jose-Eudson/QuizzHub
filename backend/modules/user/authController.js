@@ -49,7 +49,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, username: user.username, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
@@ -75,6 +75,7 @@ const perfil = async (req, res) => {
 
     res.json({
       id: usuario.id,
+      username: usuario.username, 
       email: usuario.email,
       role: usuario.role
     });

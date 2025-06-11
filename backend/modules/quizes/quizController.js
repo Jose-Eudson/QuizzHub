@@ -62,7 +62,6 @@ const listarQuizzes = async (req, res) => {
   }
 };
 
-// Em quizController.js -> obterQuiz
 const obterQuiz = async (req, res) => {
   try {
     const { id } = req.params;
@@ -78,7 +77,6 @@ const obterQuiz = async (req, res) => {
     `, [id]);
 
     if (rows.length === 0 || !rows[0].quiz_id) {
-      // Se não  linhas ou a primeira linha não tiver um quiz_id, o quiz não existe.
       const [quizCheck] = await pool.query('SELECT id FROM quizzes WHERE id = ?', [id]);
       if(quizCheck.length === 0) {
         return res.status(404).json({ mensagem: 'Quiz não encontrado' });

@@ -1,18 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (código existente para 'loadHostQuizzes' e 'handleHostQuiz') ...
     const token = localStorage.getItem('token');
     const socket = io('http://localhost:3000');
     let state = { gameId: null, pin: null, players: [] };
 
-    // --- Listeners de Eventos da UI ---
     document.getElementById('startGameBtn').addEventListener('click', () => {
         socket.emit('game:start', { gameId: state.gameId });
     });
 
-    // O botão "Próxima Pergunta" não é mais necessário e pode ser removido do HTML.
-    
-    // --- Listeners de Sockets ---
-    socket.on('player:joined', (player) => { /* ...código existente... */ });
+    socket.on('player:joined', (player) => {});
 
     socket.on('game:started', () => {
         document.getElementById('lobbySection').classList.add('d-none');

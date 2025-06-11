@@ -283,7 +283,6 @@
       box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
     }
 
-    /* Scrollbar personalizada */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -351,7 +350,6 @@
   margin-bottom: 2rem;
 }
 
-/* Tela do Player do Quiz */
 .quiz-player-body {
   background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
   color: var(--text-light);
@@ -395,7 +393,6 @@
   font-weight: 500;
 }
 
-/* Tela de Resultados */
 #feedbackMessage {
   font-weight: bold;
   background: linear-gradient(45deg, var(--accent-blue), var(--accent-pink));
@@ -409,7 +406,6 @@
   font-size: 2.5rem;
 }
 
-/* Tabela de Ranking */
 .table {
   --bs-table-bg: var(--card-bg);
   --bs-table-striped-bg: var(--secondary-dark);
@@ -424,7 +420,6 @@
    --bs-table-border-color: var(--accent-pink);
 }
 
-/* Histórico de Tentativas */
 .history-item {
   background-color: var(--card-bg);
   border-color: var(--accent-purple);
@@ -435,4 +430,37 @@
 .history-item:hover {
    transform: scale(1.02);
    border-left: 5px solid var(--accent-pink);
+}
+
+body.host-page #finalRankingBody tr td,
+body.host-page #finalRankingBody tr td:first-child,
+body.host-page #resultsSection th {
+  color: white !important;
+}
+
+#rankingTableContainer .table th,
+#rankingTableContainer .table td {
+  color: #FFFFFF;
+}
+
+#historyListContainer .history-item,
+#historyListContainer .history-item strong,
+#historyListContainer .history-item small {
+    color: #FFFFFF !important;
+}
+
+#noRankingMessage,
+#noHistoryMessage {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-blue);
+    color: #FFFFFF;
+}
+
+.history-item:hover,
+.history-item:hover h5,
+.history-item:hover p,
+.history-item:hover small,
+.history-item:hover strong {
+    background-color: var(--accent-purple); 
+    color: #FFFFFF !important;
 }

@@ -74,6 +74,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-    // Inicia mostrando a tela de espera.
     showSection(waitingSection);
 });
