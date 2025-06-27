@@ -1,16 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
+  console.log(3)
   if (!token) {
-    window.location.href = "../login/login-component.html";
+    window.location.href = "../menu-inicial/menu-inicial-component.html";
     return;
   }
-
-  const userRole = localStorage.getItem("userRole");
-  if(userRole !== 'admin') {
-      localStorage.clear();
-      window.location.href = "../login/login-component.html";
-      return;
-  }
+  console.log(4)
+  // const userRole = localStorage.getItem("userRole");
+  // if(userRole !== 'admin') {
+  //     localStorage.clear();
+  //     window.location.href = "../menu-inicial/menu-inicial-component.html";
+  //     return;
+  // }
 
   const btnLogout = document.getElementById("btnLogout");
   if (btnLogout) {

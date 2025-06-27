@@ -21,12 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (joinGameForm) {
     joinGameForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       const pin = document.getElementById("gamePin").value;
-      const nickname = localStorage.getItem("username"); 
+      const nickname = document.getElementById("nickname").value;
 
       if (!pin || !nickname) {
-        alert("O PIN do jogo é obrigatório. Se o erro persistir, faça o login novamente.");
+        alert("O PIN do jogo e o nickname são obrigatórios.");
         return;
       }
 

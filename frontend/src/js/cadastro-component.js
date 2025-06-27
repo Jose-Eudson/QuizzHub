@@ -1,31 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    const socket = io('http://localhost:3000');
-    let state = { gameId: null, pin: null, players: [] };
+    const formCadastro = document.getElementById('formCadastro');
 
-    document.getElementById('startGameBtn').addEventListener('click', () => {
-        socket.emit('game:start', { gameId: state.gameId });
-    });
+    formCadastro.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-    socket.on('player:joined', (player) => {});
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+        const role = document.getElementById('role').value;
 
-    socket.on('game:started', () => {
-        document.getElementById('lobbySection').classList.add('d-none');
-        document.getElementById('gameSection').classList.remove('d-none');
-    });
+        if (!role) {
+            alert('Por favor, selecione o tipo de conta (Administrador ou Jogador).');
+            return;
+        }
 
-    socket.on('game:nextQuestion', (data) => {
-        document.getElementById('questionNumber').textContent = `${data.questionIndex + 1} de ${data.totalQuestions}`;
-        document.getElementById('questionText').textContent = data.question.question_text;
-    });
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    senha: senha,
+                    role: role
+                }),
+            });
 
-    socket.on('game:finished', (data) => {
-        document.getElementById('gameSection').classList.add('d-none');
-        document.getElementById('resultsSection').classList.remove('d-none');
-        document.getElementById('finalRanking').innerHTML = data.finalRanking.map((p, i) =>
-            `<div class="p-1 h5">${i + 1}. ${p.nickname} - ${p.score} pts</div>`
-        ).join('');
-    });
+            const data = await response.json();
 
-    loadHostQuizzes();
+            if (response.ok) {
+                alert(data.mensagem || 'Cadastro realizado com sucesso! Você será redirecionado para o login.');
+                window.location.href = '../login/login-component.html';
+            } else {
+                alert(data.mensagem || 'Ocorreu um erro no cadastro.');
+            }
+
+        } catch (error) {
+            console.error('Erro ao tentar cadastrar:', error);
+            alert('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
+        }
+    });
 });
